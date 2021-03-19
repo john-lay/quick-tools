@@ -63,7 +63,7 @@ public class LineCurveEditor : Editor
             Handles.DrawLine(p1, p2);
             Handles.DrawLine(p3, p4);
             // Debug.Log("repainting");
-            mousePosition = Vector2.zero;
+            // mousePosition = Vector2.zero;
         }
     }
 
@@ -80,17 +80,26 @@ public class LineCurveEditor : Editor
         curveCanvas = new Rect(labelRect.x, labelRect.y + labelRect.height, labelRect.width, 180);
         DebugRect(curveCanvas);
         
-        var start = new Vector2(curveCanvas.x + 10, curveCanvas.y + 20);
-        var end = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
-        // Debug.LogFormat("start {0}, end {1}", start, end);
-        Handles.DrawLine(start, end);
+        // var start = new Vector2(curveCanvas.x + 10, curveCanvas.y + 20);
+        // var end = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
+        // // Debug.LogFormat("start {0}, end {1}", start, end);
+        // Handles.DrawLine(start, end);
         
         // draw a bezier curve
-        var startPosition = new Vector2(curveCanvas.x + 10,  curveCanvas.y + 200);
-        var endPosition = new Vector2(curveCanvas.x + 200,  curveCanvas.y + 10);
-        var startTangent = new Vector2(curveCanvas.x + 10, curveCanvas.y + 20);
-        var endTangent = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
-        Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.blue, BoxBorder, 2);
+        var minPosition = curveCanvas.width * maxSliderValue + 20;
+        var startPosition = new Vector2(minPosition, curveCanvas.y + 170);
+        
+        var maxPosition = curveCanvas.width * minSliderValue + 20;
+        var endPosition = new Vector2(maxPosition,  curveCanvas.y + 10);
+        
+        // var startTangent = new Vector2(curveCanvas.x + 10, curveCanvas.y + 20);
+        // var startTangent = Vector3.zero;
+        var startTangent = mousePosition;
+        // var endTangent = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
+        var endTangent = Vector3.zero;
+        // var endTangent = mousePosition;
+        
+        Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.black, BoxBorder, 2);
     }
 
     void DebugRect(Rect rect)
