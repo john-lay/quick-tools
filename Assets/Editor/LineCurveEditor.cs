@@ -96,9 +96,10 @@ public class LineCurveEditor : Editor
         // var startTangent = Vector3.zero;
         var startTangent = mousePosition;
         // var endTangent = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
-        var endTangent = Vector3.zero;
-        // var endTangent = mousePosition;
+        // var endTangent = Vector3.zero;
+        var endTangent = mousePosition;
         
+        // Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.black, BoxBorder, 2);
         Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.black, BoxBorder, 2);
     }
 
