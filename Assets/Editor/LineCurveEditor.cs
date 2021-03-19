@@ -5,7 +5,8 @@ using UnityEngine;
 public class LineCurveEditor : Editor
 {
     private SerializedObject obj;
-    private Rect curveCanvas; 
+    private Rect curveCanvas;
+    Vector2 mousePosition = Vector2.zero;
 
     public void OnEnable()
     {
@@ -33,17 +34,40 @@ public class LineCurveEditor : Editor
 
     void DrawDragPoint()
     {
+        // var p11 = new Vector2(200, 200);
+        // var p21 = new Vector2(210, 210);
+        // Handles.DrawLine(p11, p21);
+        
         if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
         {
             var p1 = Event.current.mousePosition;
             var p2 = p1 + new Vector2(10, 10);
             Debug.LogFormat("Left-Mouse Down {0}, {1}", p1, p2);
             
-            Rect rect = GUILayoutUtility.GetRect(10, 1000, 200, 200);
-            Handles.DrawLine(p1, p2);
+            // Rect rect = GUILayoutUtility.GetRect(10, 1000, 200, 200);
+            // Handles.DrawLine(p1, p2);
             // Repaint();
             
+            // var p11 = new Vector2(200, 200);
+            // var p21 = new Vector2(210, 210);
+            // Handles.DrawLine(p11, p21);
+            mousePosition = Event.current.mousePosition;
+            Repaint();
+
         }
+
+        if (Event.current.type == EventType.Repaint && mousePosition != Vector2.zero)
+        {
+            var p1 = mousePosition;
+            var p2 =  p1 + new Vector2(10, 10);
+            var p3 = p1 + new Vector2(10, 0);
+            var p4 = p1 + new Vector2(0, 10);
+            Handles.DrawLine(p1, p2);
+            Handles.DrawLine(p3, p4);
+            Debug.Log("repainting");
+            mousePosition = Vector2.zero;
+        }
+
         var btn = GUI.Button(new Rect(curveCanvas.x + 20, curveCanvas.y + 20, 20, 20), GUIContent.none);
         if (curveCanvas.Contains(Event.current.mousePosition))
         {
