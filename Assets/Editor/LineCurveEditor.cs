@@ -29,7 +29,7 @@ public class LineCurveEditor : Editor
         // EditorGUILayout.BeginVertical(new GUIStyle(GUI.skin.box), GUILayout.Height(200));
         EditorGUILayout.BeginVertical(GUIStyle.none, GUILayout.Height(200));
         
-        DrawMyLine("Curve");
+        DrawMyBezier("Curve");
         DrawDragPoint();
         EditorGUILayout.EndVertical();
         
@@ -38,8 +38,22 @@ public class LineCurveEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         EditorGUILayout.Space();
-        maxSliderValue = EditorGUILayout.Slider(maxSliderValue, 0, 1);
         
+        // maxSliderValue = EditorGUILayout.Slider(maxSliderValue, 0, 1);
+        var rect = new Rect(curveCanvas.x, curveCanvas.y + curveCanvas.height - 10, curveCanvas.width, 20);
+        maxSliderValue = GUI.HorizontalSlider(rect, maxSliderValue, 0, 1);
+        
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+    }
+
+    bool mouseWithinCanvas()
+    {
+        // if (mousePosition.y > curveCanvas.yMax) Debug.Log("mouse click beneath canvas");
+        // if (mousePosition.y < curveCanvas.yMin) Debug.Log("mouse click above canvas");
+
+        return mousePosition.y < curveCanvas.yMax - 10 && mousePosition.y > curveCanvas.yMin + 10;
     }
 
     void DrawDragPoint()
@@ -51,34 +65,52 @@ public class LineCurveEditor : Editor
             // Debug.LogFormat("Left-Mouse Down {0}, {1}", p1, p2);
             mousePosition = Event.current.mousePosition;
             Repaint();
-
         }
 
         if (Event.current.type == EventType.Repaint && mousePosition != Vector2.zero)
         {
-            var p1 = mousePosition;
-            var p2 =  p1 + new Vector2(10, 10);
-            var p3 = p1 + new Vector2(10, 0);
-            var p4 = p1 + new Vector2(0, 10);
-            Handles.DrawLine(p1, p2);
-            Handles.DrawLine(p3, p4);
+            // if (mousePosition.y > curveCanvas.yMax) Debug.Log("mouse click beneath canvas");
+            // if (mousePosition.y < curveCanvas.yMin) Debug.Log("mouse click above canvas");
+            
+            // mouse position in safe zone
+            if (mouseWithinCanvas())
+            {
+                // Debug.LogFormat("safe zone, {0}, {1}", mousePosition.y, curveCanvas.yMax);
+                var p1 = mousePosition;
+                var p2 =  p1 + new Vector2(10, 10);
+                var p3 = p1 + new Vector2(10, 0);
+                var p4 = p1 + new Vector2(0, 10);
+                Handles.DrawLine(p1, p2);
+                Handles.DrawLine(p3, p4);
+            }
+
+            // var p1 = mousePosition;
+            // var p2 =  p1 + new Vector2(10, 10);
+            // var p3 = p1 + new Vector2(10, 0);
+            // var p4 = p1 + new Vector2(0, 10);
+            // Handles.DrawLine(p1, p2);
+            // Handles.DrawLine(p3, p4);
             // Debug.Log("repainting");
             // mousePosition = Vector2.zero;
         }
     }
 
-    void DrawMyLine(string label)
+    void DrawMyBezier(string label)
     {
         // draw a label       
         EditorGUILayout.LabelField(label);
         
         // draw a min value slider
-        minSliderValue = EditorGUILayout.Slider(minSliderValue, 0, 1);
-        
+        // minSliderValue = EditorGUILayout.Slider(minSliderValue, 0, 1);
+
         // draw a canvas
         Rect labelRect = GUILayoutUtility.GetLastRect();
-        curveCanvas = new Rect(labelRect.x, labelRect.y + labelRect.height, labelRect.width, 180);
+        curveCanvas = new Rect(labelRect.x, labelRect.y + labelRect.height + 10, labelRect.width, 180);
         DebugRect(curveCanvas);
+        
+        // draw a min value slider
+        var rect = new Rect(curveCanvas.x, curveCanvas.y - 10, curveCanvas.width, 20);
+        minSliderValue = GUI.HorizontalSlider(rect, minSliderValue, 0, 1);
         
         // var start = new Vector2(curveCanvas.x + 10, curveCanvas.y + 20);
         // var end = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
@@ -87,10 +119,10 @@ public class LineCurveEditor : Editor
         
         // draw a bezier curve
         var minPosition = curveCanvas.width * maxSliderValue + 20;
-        var startPosition = new Vector2(minPosition, curveCanvas.y + 170);
+        var startPosition = new Vector2(minPosition, curveCanvas.y + 170 + 5);
         
         var maxPosition = curveCanvas.width * minSliderValue + 20;
-        var endPosition = new Vector2(maxPosition,  curveCanvas.y + 10);
+        var endPosition = new Vector2(maxPosition + 3,  curveCanvas.y + 5);
         
         // var startTangent = new Vector2(curveCanvas.x + 10, curveCanvas.y + 20);
         // var startTangent = Vector3.zero;
@@ -98,9 +130,11 @@ public class LineCurveEditor : Editor
         // var endTangent = new Vector2(curveCanvas.x + 100,  curveCanvas.y + 100);
         // var endTangent = Vector3.zero;
         var endTangent = mousePosition;
-        
-        // Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.black, BoxBorder, 2);
-        Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.black, BoxBorder, 2);
+
+        // if (mouseWithinCanvas())
+        // {
+            Handles.DrawBezier(startPosition, endPosition, startTangent, endTangent, Color.black, BoxBorder, 2);
+        // }
     }
 
     void DebugRect(Rect rect)
